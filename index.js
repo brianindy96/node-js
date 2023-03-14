@@ -17,17 +17,36 @@ app.get('/', (req, res) => {
 });
 
 // Everytime a user connects to the server, the server will log a message to the console.
-io.on('connection', (socket) => {
-    console.log('User connected');
-    // Listen to chat message
-    socket.on("chat message", (msg) => {
-        io.emit("chat message", msg)
+// io.on('connection', (socket) => {
+//     console.log('User connected');
+//     // Listen to chat message
+//     socket.on("chat message", (msg) => {
+//         io.emit("chat message", msg)
+//     })
+//     // Listen to when a User disconnects
+//     socket.on("disconnect", () => {
+//         console.log("User disconnected");
+//     });
+// });
+
+let n
+
+io.on("connection", (socket) => {
+    socket.on('newUser', (name) => {
+        let newUser = name;
+
+        console.log(`${newUser} connected`)
+
+        socket.on('disconnect', () => {
+            console.log(`User disconnected`);
+            io.emit('disconnected', `${newUser} disconnected`);
+        })
     })
-    // Listen to when a User disconnects
-    socket.on("disconnect", () => {
-        console.log("User disconnected");
-    });
-});
+
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+    })
+})
 
 // Listen on port 5000
 server.listen(PORT, () => {

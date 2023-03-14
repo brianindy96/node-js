@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <h1>Hello, World!</h1>
@@ -23,12 +24,17 @@
         const input = document.getElementById('input');
         const userID = Date.now();
 
+        let name = prompt("What is your username: ")
+
         // On submit
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
+
             if(input.value){
+                socket.emit("newUser", name);
                 socket.emit('chat message', {
+                    name: name,
                     msg: input.value,
                     user: userID,
                 })
@@ -42,7 +48,7 @@
             const message = document.createElement("li");
             const messageItem = document.createElement("span");
             // Put msg in span as text content
-            messageItem.textContent = msgObject.msg;
+            messageItem.textContent = `${msgObject.name}: ${msgObject.msg}`;
 
             // if the user is the same as the one who sent the message, add class right to the li
             // if not, we will add "left" to it
